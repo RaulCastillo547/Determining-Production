@@ -30,6 +30,7 @@ class Market:
                 return -1
         
         session_buyers = sorted(self.buyer_prices, key=lambda x: random.random())
+        # session_buyers = sorted(self.buyer_prices, key=lambda x: -x)
         session_sellers = sorted(self.sellers, key=lambda x: random.random())
         for seller in session_sellers:
             # How much do you have to sell
