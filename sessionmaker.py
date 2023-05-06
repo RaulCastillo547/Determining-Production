@@ -29,58 +29,49 @@ class Market:
             elif sign == '-':
                 return -1
         
+        current_market = {}
+        for seller in self.sellers:
+            current_market[seller] = {
+                'Price per Item': self.sellers[seller]['Costs'](self.sellers[seller]['Quantity'])/self.sellers[seller]['Quantity'],
+                'Quantity': self.sellers[seller]['Quantity'],
+                'Revenue': 0
+                }
+
         session_buyers = sorted(self.buyer_prices, key=lambda x: random.random())
         # session_buyers = sorted(self.buyer_prices, key=lambda x: -x)
-        session_sellers = sorted(self.sellers, key=lambda x: random.random())
-        for seller in session_sellers:
-            # How much do you have to sell
-            sellable_goods = self.sellers[seller]['Quantity']
 
-            # How much is the cost of production
-            production_cost_equation = self.sellers[seller]['Costs']
-            production_cost = production_cost_equation(sellable_goods)
-
-            # What is the price per item
-            price_per_item = production_cost/sellable_goods
-
-            # How much can be made
-            revenue = 0
-            for i in range(sellable_goods):
-                if len(session_buyers) <= 0:
+        for buyer_price in session_buyers:
+            # Selling
+            session_sellers = sorted(self.sellers, key=lambda x: random.random())
+            for seller in session_sellers:
+                if buyer_price >= current_market[seller]['Price per Item'] and current_market[seller]['Quantity'] > 0:
+                    current_market[seller]['Revenue'] += buyer_price
+                    current_market[seller]['Quantity'] -= 1
                     break
-                if session_buyers[0] >= price_per_item:
-                    revenue += session_buyers.pop(0)
-            
-            #How much is the profit
-            profit_made = revenue - production_cost
-            if profit_made >= self.sellers[seller]['Previous Profit']:
-                if self.sellers[seller]['Quantity'] <= 1:
-                    self.sellers[seller]['Change'] = '+'
-                elif self.sellers[seller]['Quantity'] >= len(self.buyer_prices):
-                    self.sellers[seller]['Change'] = '-'
-            elif profit_made < self.sellers[seller]['Previous Profit']:
-                self.sellers[seller]['Change'] = change_sign(self.sellers[seller]['Change'])
-                if self.sellers[seller]['Quantity'] <= 1:
-                    self.sellers[seller]['Change'] = '+'
-                elif self.sellers[seller]['Quantity'] >= len(self.buyer_prices):
-                    self.sellers[seller]['Change'] = '-'
-            
-            self.sellers[seller]['Quantity'] += change_quantity(self.sellers[seller]['Change'])
-            self.sellers[seller]['Previous Profit'] = profit_made
 
-    
-    
+        
+        for seller in session_sellers:
+            current_profit = current_market[seller]['Revenue'] - current_market[seller]['Price per Item']*self.sellers[seller]['Quantity']
+            
+            if current_profit < self.sellers[seller]['Previous Profit']:
+                self.sellers[seller]['Change'] = change_sign(self.sellers[seller]['Change'])
+            if self.sellers[seller]['Quantity'] <= 1:
+                self.sellers[seller]['Change'] = '+'
+            
+            self.sellers[seller]['Previous Profit'] = current_profit
+            self.sellers[seller]['Quantity'] += change_quantity(self.sellers[seller]['Change'])
+
 # Main code defines a test case
 if __name__ == '__main__':
     m = Market()
 
     m.add_buyers([i*2.5 for i in range(100)])
     m.add_seller('Malwart Co.', lambda x: (x*70+50))
-    m.add_seller('Gartet Inc.', lambda x: (50*x))
+    m.add_seller('Gartet Inc.', lambda x: (200*x))
 
     seller_quantities = {}
     seller_prices = {}
-    for i in range(90000):
+    for i in range(1000):
         m.session()
         for company in m.sellers:
             if company not in seller_quantities:
