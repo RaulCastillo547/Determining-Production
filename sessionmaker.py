@@ -7,9 +7,9 @@ class Market:
         self.buyer_prices = []
         self.sellers = {}
 
-    def add_seller(self, name, cost_equation):
+    def add_seller(self, name, cost_equation, profit_margin):
         # Adds to sellers in a market
-        self.sellers.update({name: {'Costs': cost_equation, 'Quantity': 1, 'Previous Profit': 0, 'Change': '+'}})
+        self.sellers.update({name: {'Costs': cost_equation, 'Profit Margin': profit_margin, 'Quantity': 1, 'Previous Profit': 0, 'Change': '+'}})
     
     def add_buyers(self, prices_list):
         # Adds to the customers in a market
@@ -32,26 +32,24 @@ class Market:
         current_market = {}
         for seller in self.sellers:
             current_market[seller] = {
-                'Price per Item': self.sellers[seller]['Costs'](self.sellers[seller]['Quantity'])/self.sellers[seller]['Quantity'],
+                'Price per Item': (self.sellers[seller]['Costs'](self.sellers[seller]['Quantity'])/self.sellers[seller]['Quantity'])*self.sellers[seller]['Profit Margin'],
                 'Quantity': self.sellers[seller]['Quantity'],
                 'Revenue': 0
                 }
 
         session_buyers = sorted(self.buyer_prices, key=lambda x: random.random())
-        # session_buyers = sorted(self.buyer_prices, key=lambda x: -x)
-
         for buyer_price in session_buyers:
             # Selling
-            session_sellers = sorted(self.sellers, key=lambda x: random.random())
+            session_sellers = sorted(self.sellers, key=lambda x: current_market[x]['Price per Item'])
             for seller in session_sellers:
                 if buyer_price >= current_market[seller]['Price per Item'] and current_market[seller]['Quantity'] > 0:
-                    current_market[seller]['Revenue'] += buyer_price
+                    current_market[seller]['Revenue'] += current_market[seller]['Price per Item']
                     current_market[seller]['Quantity'] -= 1
                     break
 
-        
-        for seller in session_sellers:
-            current_profit = current_market[seller]['Revenue'] - current_market[seller]['Price per Item']*self.sellers[seller]['Quantity']
+        for seller in self.sellers:
+
+            current_profit = current_market[seller]['Revenue'] - self.sellers[seller]['Costs'](self.sellers[seller]['Quantity'])
             
             if current_profit < self.sellers[seller]['Previous Profit']:
                 self.sellers[seller]['Change'] = change_sign(self.sellers[seller]['Change'])
@@ -65,9 +63,9 @@ class Market:
 if __name__ == '__main__':
     m = Market()
 
-    m.add_buyers([i*2.5 for i in range(100)])
-    m.add_seller('Malwart Co.', lambda x: (x*70+50))
-    m.add_seller('Gartet Inc.', lambda x: (200*x))
+    m.add_buyers([i*5 for i in range(101)])
+    m.add_seller('Malwart Co.', lambda x: (25*x**2), 1.05)
+    # m.add_seller('Gartet Inc.', lambda x: (200*x), 1.05)
 
     seller_quantities = {}
     seller_prices = {}
