@@ -9,7 +9,7 @@ class Market:
 
     def add_seller(self, name, cost_equation, profit_margin):
         # Adds to sellers in a market
-        self.sellers.update({name: {'Costs': cost_equation, 'Profit Margin': profit_margin, 'Quantity': 1, 'Previous Profit': 0, 'Change': '+'}})
+        self.sellers.update({name: {'Costs': cost_equation, 'Profit Margin': 1 + profit_margin, 'Quantity': 1, 'Previous Profit': 0, 'Change': '+'}})
     
     def add_buyers(self, prices_list):
         # Adds to the customers in a market
@@ -78,7 +78,7 @@ if __name__ == '__main__':
                 seller_prices[company] = []
             
             seller_quantities[company] += [m.sellers[company]['Quantity']]
-            seller_prices[company] += [m.sellers[company]['Costs'](m.sellers[company]['Quantity'])/m.sellers[company]['Quantity']]
+            seller_prices[company] += [(m.sellers[company]['Costs'](m.sellers[company]['Quantity'])/m.sellers[company]['Quantity'])*m.sellers[company]['Costs']]
     
     buyer_quantities = [i+1 for i in range(len(m.buyer_prices))]
     buyer_prices = sorted(m.buyer_prices, key=lambda x: -x)

@@ -1,8 +1,8 @@
-from sessionmaker import Market
+from definitions.market_class import Market
 import numpy as np
 from matplotlib import pyplot as plt
 
-def cost_experiment(market_class):
+def single_company(market_class):
     ## Data extraction:
     quantity_sold = []
     price_per_item = []
@@ -77,7 +77,7 @@ def cost_experiment(market_class):
     plt.tight_layout()
     plt.show()
 
-def competition_experiment(market_class):
+def multiple_companies(market_class):
     # Data extraction for each company:
     market_data = {}
     for seller in market_class.sellers:
@@ -161,8 +161,6 @@ def competition_experiment(market_class):
         prices = [val[1] for val in market_data[competitor]['Profits'].values()]
         colors = ['#0a8f00' if i >= 0 else '#e80707' for i in prices]
         axs[i+1][0].bar(quantities, prices, color=colors)
-        print(prices)
-        print(quantities)
         axs[i+1][0].set_title(f'Average Profit (Loss) per Quantity for {competitor}', fontsize=15, color='#000000')
         axs[i+1][0].set_xlabel('Quantity', fontsize=15, color='#000000')
         axs[i+1][0].set_ylabel('Average Profit (Loss)', fontsize=15, color='#000000')
