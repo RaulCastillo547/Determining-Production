@@ -2,8 +2,10 @@ from definitions.market_class import Market
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Functions run and take data from sessions in a market class.
+# Then, the functions output a matplotlib graph showcasing the data.
 def single_company(market_class):
-    ## Data extraction:
+    # single_company() runs sessions with only one seller and takes in session data.
     quantity_sold = []
     price_per_item = []
     profits = {}
@@ -29,7 +31,6 @@ def single_company(market_class):
     # Supply and Demand Extraction
     buyer_prices = np.array(sorted(market_class.buyer_prices)[::-1])
     buyer_quantities = [i + 1 for i in range(len(buyer_prices))]
-
 
     # Quantity Charts/Profit Simplification
     names = profits.keys()
@@ -175,3 +176,10 @@ def multiple_companies(market_class):
     
     plt.tight_layout()
     plt.show()
+
+if __name__ == '__main__':
+    mk = Market()
+    mk.add_buyers([i*5 for i in range(1, 101)])
+    mk.add_seller('Company 1', lambda q: 250*q, 0.10)
+    
+    single_company(mk)
