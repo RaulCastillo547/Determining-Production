@@ -47,10 +47,10 @@ def single_company(market_class):
     fig.set_figheight(10)
 
     # Supply and Demand
-    ax1.scatter(quantity_sold, price_per_item, label='Supply', c='#e80707')
+    ax1.scatter(quantity_sold, price_per_item, label=company_name, c='#e80707')
     ax1.scatter(buyer_quantities, buyer_prices, label='Demand', c='#078ee8')
 
-    ax1.set_title('Supply and Demand', fontsize=15, color='#000000')
+    ax1.set_title('Price and Demand Curves', fontsize=15, color='#000000')
     ax1.set_xlabel('Quantity', fontsize=15, color='#000000')
     ax1.set_ylabel('Price', fontsize=15, color='#000000')
 
@@ -83,8 +83,6 @@ def multiple_companies(market_class):
     market_data = {}
     for seller in market_class.sellers:
         market_data.update({seller: {'Quantity Sold': [], 'Price per Item': [], 'Profits': {}, 'Profit Margin': market_class.sellers[seller]['Profit Margin']}})
-    
-    general_data = {'Total Quantity': [], 'Average Price': []}
 
     # Profit Simplification
     competitors = market_data.keys()
@@ -102,9 +100,6 @@ def multiple_companies(market_class):
 
             total_quantity += current_quantity
             price_sum += (costs(current_quantity))
-        
-        general_data['Total Quantity'].append(total_quantity)
-        general_data['Average Price'].append(price_sum/total_quantity)
         
         market_class.session()
         
@@ -133,27 +128,18 @@ def multiple_companies(market_class):
     fig, axs = plt.subplots(1 + len(competitors), 2, facecolor='#ffffff')
     fig.set_figwidth(20)
     fig.set_figheight(20)
+    axs[0][1].remove()
 
     # Supply and Demand Curve
     axs[0][0].scatter(buyer_quantities, buyer_prices, label='Demand',c='#078ee8')
     for seller in market_data:
         axs[0][0].scatter(market_data[seller]['Quantity Sold'], market_data[seller]['Price per Item'], label=seller)
 
-    axs[0][0].set_title('Supply and Demand', fontsize=15, color='#000000')
+    axs[0][0].set_title('Price and Demand Curves', fontsize=15, color='#000000')
     axs[0][0].set_xlabel('Quantity', fontsize=15, color='#000000')
     axs[0][0].set_ylabel('Price', fontsize=15, color='#000000')
 
     axs[0][0].legend()
-
-    # Average Curve
-    axs[0][1].scatter(buyer_quantities, buyer_prices, label='Demand',c='#078ee8')
-    axs[0][1].scatter(general_data['Total Quantity'], general_data['Average Price'], label='Supply', c='#33b572')
-
-    axs[0][1].set_title('Market Supply and Demand', fontsize=15, color='#000000')
-    axs[0][1].set_xlabel('Quantity', fontsize=15, color='#000000')
-    axs[0][1].set_ylabel('Price', fontsize=15, color='#000000')
-
-    axs[0][1].legend()
 
     # Quantity
     for i, competitor in enumerate(competitors):
@@ -176,10 +162,3 @@ def multiple_companies(market_class):
     
     plt.tight_layout()
     plt.show()
-
-if __name__ == '__main__':
-    mk = Market()
-    mk.add_buyers([i*5 for i in range(1, 101)])
-    mk.add_seller('Company 1', lambda q: 250*q, 0.10)
-    
-    single_company(mk)
