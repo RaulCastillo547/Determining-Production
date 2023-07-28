@@ -1,6 +1,10 @@
 # Quantity-Optimizer
 Small project that models how companies find the right quantity of products to produce to maximize profits given costs, competition, and demand.
 
+## How to Navigate:
+- `Data Analysis.ipynb` is the main file of the project, containing my analysis of what my code can show.
+- The definitions folder contains two files with the project's code: `market_class.py` defines the Market() class, and  `analysis_functions.py` defines functions that analyze the Market() class using graphs.
+
 ## Overall Notes:
 - **Challenges**:
     - Organization/Maintaining Simplicity: I wanted the `Data Analysis.ipynb` file to contain simplified code, having it focus on analysis and leave the code to the `definitions` folder's files. I solved this issue by relying on Python's class and module import systems which allow me to import and use the necessary code.
