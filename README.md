@@ -1,4 +1,4 @@
-# Quantity-Optimizer
+# Determining Production
 Small project that models how companies find the right quantity of products to produce to maximize profits given costs, competition, and demand.
 
 ## How to Navigate:
